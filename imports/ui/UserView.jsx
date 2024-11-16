@@ -10,7 +10,7 @@ const UserView = ({ username }) => {
         console.error('Error al obtener productos:', error.message);
         alert('Error al obtener productos: ' + error.message);
       } else {
-        console.log('Productos obtenidos:', response); // Verifica los datos
+        console.log('Productos obtenidos:', response); 
         setProductos(response);
       }
     });
