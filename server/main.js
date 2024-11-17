@@ -31,9 +31,7 @@ Meteor.methods({
   async 'producto.crear'(nombre, descripcion, precio) {
     try {
       const query = `
-        INSERT INTO productos (nombre, descripcion, precio) 
-        VALUES ('${nombre}', '${descripcion}', ${precio})
-      `;
+        INSERT INTO productos (nombre, descripcion, precio) VALUES ('${nombre}', '${descripcion}', ${precio}) `;
       await connection.query(query);
       return { success: true, message: `Producto ${nombre} creado exitosamente` };
     } catch (error) {
@@ -55,18 +53,13 @@ Meteor.methods({
 
 //confirmar compra
 Meteor.methods({
-  'compra.crear'(compra) {
-    const { productoId, direccion, metodoPago, username } = compra;
-
-    const query = `
-      INSERT INTO compras (producto_id, direccion, metodo_pago, usuario)
-      VALUES (?, ?, ?, ?)
-    `;
-
-    conexion.query(query, [productoId, direccion, metodoPago, username], (err, results) => {
-      if (err) {
-        throw new Meteor.Error('Error al guardar la compra', err.message);
-      }
-    });
-  },
+  async 'registro.compra'(producto, direccion, metodoPago) {
+    try {
+      const query = `INSERT INTO compras (producto, direccion, metodo_pago) VALUES ('${producto}', '${direccion}', '${metodoPago}')`;
+      await connection.query(query);
+      return { success: true, message: 'Compra registrada correctamente' };
+    } catch (error) {
+      throw new Meteor.Error('Error al registrar la compra', error.message);
+    }
+  }
 });
