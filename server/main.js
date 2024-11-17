@@ -53,3 +53,20 @@ Meteor.methods({
 });
 
 
+//confirmar compra
+Meteor.methods({
+  'compra.crear'(compra) {
+    const { productoId, direccion, metodoPago, username } = compra;
+
+    const query = `
+      INSERT INTO compras (producto_id, direccion, metodo_pago, usuario)
+      VALUES (?, ?, ?, ?)
+    `;
+
+    conexion.query(query, [productoId, direccion, metodoPago, username], (err, results) => {
+      if (err) {
+        throw new Meteor.Error('Error al guardar la compra', err.message);
+      }
+    });
+  },
+});
