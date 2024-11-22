@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FormularioCompra = ({ producto, username, onBack }) => {
+const FormularioCompraCarrito = ({ productos, username, onBack, onUserView }) => {
   const [direccion, setDireccion] = useState('');
   const [metodoPago, setMetodoPago] = useState('');
 
@@ -10,34 +10,38 @@ const FormularioCompra = ({ producto, username, onBack }) => {
       return;
     }
 
-    alert(
-      `Compra confirmada para el producto: ${producto.nombre}\nUsuario: ${username}\nDirección: ${direccion}\nMétodo de Pago: ${metodoPago}`
-    );
-
-    Meteor.call(
-      'registro.compra',
-      producto.nombre, 
-      username,        
-      direccion,       
-      metodoPago,     
-      (error, result) => {
-        if (error) {
-          console.error('Error al registrar la compra:', error.message);
-          alert('Ocurrió un error al registrar la compra en la base de datos.');
-        } else {
-          console.log(result.message);
-          alert('Compra registrada exitosamente en la base de datos.');
+    productos.forEach((producto) => {
+      Meteor.call(
+        'registro.compra',
+        producto.producto,
+        username,
+        direccion,
+        metodoPago,
+        (error) => {
+          if (error) {
+            console.error(`Error al registrar la compra de ${producto.producto}:`, error.message);
+            alert(`Ocurrió un error al registrar la compra de ${producto.producto}.`);
+          } else {
+            console.log(`Compra registrada exitosamente para ${producto.producto}.`);
+          }
         }
-      }
-    );
-    onBack();
+      );
+    });
+
+    alert('Todas las compras han sido registradas correctamente.');
+    onBack(); 
   };
 
   return (
     <div className="formulario-compra-container">
       <button onClick={onBack} className="login">Volver</button>
       <h1>Formulario de Compra</h1>
-      <p><strong>Producto seleccionado:</strong> {producto.nombre}</p>
+      <p><strong>Productos seleccionados:</strong></p>
+      <ul>
+        {productos.map((producto, index) => (
+          <li key={index}>{producto.producto}</li>
+        ))}
+      </ul>
       <div>
         <label htmlFor="direccion">Dirección:</label>
         <input
@@ -67,4 +71,4 @@ const FormularioCompra = ({ producto, username, onBack }) => {
   );
 };
 
-export default FormularioCompra;
+export default FormularioCompraCarrito;

@@ -26,6 +26,9 @@ Meteor.methods({
     }
   }
 });
+
+
+
 //REGISTRO DE PRODUCTOS
 Meteor.methods({
   async 'producto.crear'(nombre, descripcion, precio) {
@@ -47,19 +50,89 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error('Error al obtener productos', error.message);
     }
+  } ,   async 'producto.editar'(nombreActual, nuevoNombre, nuevaDescripcion, nuevoPrecio) {
+    try {
+      const actualizaciones = [];
+      if (nuevoNombre) {
+        actualizaciones.push(`nombre = '${nuevoNombre}'`);
+      }
+      if (nuevaDescripcion) {
+        actualizaciones.push(`descripcion = '${nuevaDescripcion}'`);
+      }
+      if (nuevoPrecio) {
+        actualizaciones.push(`precio = ${parseFloat(nuevoPrecio)}`);
+      }
+
+      if (actualizaciones.length === 0) {
+        throw new Meteor.Error('No hay datos para actualizar');
+      }
+
+      const query = `
+        UPDATE productos SET ${actualizaciones.join(', ')} WHERE nombre = '${nombreActual}'`;
+
+      await connection.query(query);
+
+      return { success: true, message: `Producto ${nombreActual} actualizado exitosamente` };
+    } catch (error) {
+      throw new Meteor.Error('Error al editar producto', error.message);
+    }
+  },
+
+  async 'producto.eliminar'(nombre) {
+    try {
+      const query = `DELETE FROM productos WHERE nombre = '${nombre}'`;
+      await connection.query(query);
+      return { success: true, message: `Producto ${nombre} eliminado exitosamente` };
+    } catch (error) {
+      throw new Meteor.Error('Error al eliminar producto', error.message);
+    }
   }
 });
 
 
-//confirmar compra
+//REALIZAR COMPRA/AGREGAR AL CARRITO
 Meteor.methods({
-  async 'registro.compra'(producto, direccion, metodoPago) {
+  async 'registro.compra'(producto, username, direccion, metodoPago) {
     try {
-      const query = `INSERT INTO compras (producto, direccion, metodo_pago) VALUES ('${producto}', '${direccion}', '${metodoPago}')`;
+      const query = `
+        INSERT INTO compras (producto, usuario, direccion, metodo_pago) VALUES ('${producto}', '${username}', '${direccion}', '${metodoPago}')`;
       await connection.query(query);
       return { success: true, message: 'Compra registrada correctamente' };
     } catch (error) {
       throw new Meteor.Error('Error al registrar la compra', error.message);
     }
+  },
+  async 'carrito.agregar'(nombreProducto, username) {
+    try {
+      const query = `
+        INSERT INTO carrito (producto, usuario) VALUES ('${nombreProducto}', '${username}')`;
+      await connection.query(query);
+      return { success: true, message: `Producto ${nombreProducto} agregado al carrito de ${username}` };
+    } catch (error) {
+      throw new Meteor.Error('Error al agregar al carrito', error.message);
+    }
+  }, 
+  async 'carrito.obtener'(username) {
+    try {
+      const query = `SELECT producto FROM carrito WHERE usuario = '${username}'`;
+      const [rows] = await connection.query(query);
+      return rows; 
+    } catch (error) {
+      throw new Meteor.Error('Error al obtener productos del carrito', error.message);
+    }
+  }, 
+  async 'registro.compra'(producto, username, direccion, metodoPago) {
+    try {
+      const insertQuery = `INSERT INTO comprasCarrito (producto, usuario, direccion, metodo_pago) VALUES ('${producto}', '${username}', '${direccion}', '${metodoPago}')`;
+      await connection.query(insertQuery);
+  
+      const deleteQuery = ` DELETE FROM carrito WHERE producto = '${producto}' AND usuario = '${username}'`;
+      await connection.query(deleteQuery);
+  
+      return { success: true, message: `Compra registrada y producto eliminado del carrito: ${producto}` };
+    } catch (error) {
+      throw new Meteor.Error('Error al registrar la compra o vaciar el carrito', error.message);
+    }
   }
+  
 });

@@ -13,7 +13,7 @@ const App = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [products, setProducts] = useState([]); 
-  const [showCart, setShowCart] = useState(false);
+  const [showCart, setShowCart] = useState(false); 
 
   const handleLoginClick = () => {
     setShowLoginForm(true);
@@ -37,9 +37,9 @@ const App = () => {
     setIsAuthenticated(false);
     setIsAdmin(false);
     setUsername('');
+    setShowCart(false); 
   };
 
- 
   const handleAddProduct = (product) => {
     setProducts([...products, product]);
   };
@@ -52,31 +52,38 @@ const App = () => {
         <InicioSesion onLoginSuccess={handleLoginSuccess} />
       ) : isAuthenticated ? (
         <div>
-<header className="header">
-  <p className="welcome-message">Bienvenid@, {username}</p>
-  {isAuthenticated && !isAdmin && (
-    <button className="carrito" onClick={() => setShowCart(true)}>
-      🛒
-    </button>
-  )}
-  <button className="login" onClick={handleLogout}>Cerrar Sesión</button>
-</header>
+          <header className="header">
+            <p className="welcome-message">Bienvenid@, {username}</p>
+            {isAuthenticated && !isAdmin && (
+              <button className="carrito" onClick={() => setShowCart(true)}>
+                🛒
+              </button>
+            )}
+            <button className="login" onClick={handleLogout}>
+              Cerrar Sesión
+            </button>
+          </header>
 
-
-<main className="main">
-  {isAdmin ? (
-    <AdminView onAddProduct={handleAddProduct} />
-  ) : showCart ? (
-    <CartView onBack={() => setShowCart(false)} />
-  ) : (
-    <UserView username={username} products={products} />
-  )}
-</main>
+          <main className="main">
+            {isAdmin ? (
+              <AdminView onAddProduct={handleAddProduct} />
+            ) : showCart ? (
+              <CartView 
+                username={username} 
+                onBack={() => setShowCart(false)} 
+              />
+            ) : (
+              <UserView username={username} products={products} />
+            )}
+          </main>
 
           <footer className="footer"></footer>
         </div>
       ) : (
-        <HomePage onLoginClick={handleLoginClick} onRegisterClick={handleRegisterClick} />
+        <HomePage
+          onLoginClick={handleLoginClick}
+          onRegisterClick={handleRegisterClick}
+        />
       )}
     </div>
   );

@@ -36,13 +36,11 @@ const RegisterForm = () => {
           <input type="text" name="username" value={formData.username} onChange={handleChange} />
         </label>
         <br />
-        <label>
-          Correo:
+        <label>Correo:
           <input type="email" name="email" value={formData.email} onChange={handleChange} />
         </label>
         <br />
-        <label>
-          Contraseña:
+        <label>Contraseña:
           <input type="password" name="password" value={formData.password} onChange={handleChange} />
         </label>
         <br />

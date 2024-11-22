@@ -9,8 +9,9 @@ const HomePage = ({ onLoginClick, onRegisterClick }) => {
       </header>
 
       <main className="main">
-        <h1>Bienvenido a nuestra aplicación</h1>
-        <p>Contenido inicial</p>
+      <h1 className="principalT">Proyecto web y sistemas móviles</h1>
+      <p className="principal">Daniel Andrés Pinzón Jay</p>
+      <p className="principal">Yeimy Tatiana Corzo Lizarazo</p>
       </main>
 
       <footer className="footer"></footer>
