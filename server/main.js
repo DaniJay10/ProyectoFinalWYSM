@@ -94,8 +94,7 @@ Meteor.methods({
 Meteor.methods({
   async 'registro.compra'(producto, username, direccion, metodoPago) {
     try {
-      const query = `
-        INSERT INTO compras (producto, usuario, direccion, metodo_pago) VALUES ('${producto}', '${username}', '${direccion}', '${metodoPago}')`;
+      const query = `INSERT INTO compras (producto, usuario, direccion, metodo_pago) VALUES ('${producto}', '${username}', '${direccion}', '${metodoPago}')`;
       await connection.query(query);
       return { success: true, message: 'Compra registrada correctamente' };
     } catch (error) {
@@ -121,17 +120,13 @@ Meteor.methods({
       throw new Meteor.Error('Error al obtener productos del carrito', error.message);
     }
   }, 
-  async 'registro.compra'(producto, username, direccion, metodoPago) {
+  async 'carrito.vaciar'(username) {
     try {
-      const insertQuery = `INSERT INTO comprasCarrito (producto, usuario, direccion, metodo_pago) VALUES ('${producto}', '${username}', '${direccion}', '${metodoPago}')`;
-      await connection.query(insertQuery);
-  
-      const deleteQuery = ` DELETE FROM carrito WHERE producto = '${producto}' AND usuario = '${username}'`;
-      await connection.query(deleteQuery);
-  
-      return { success: true, message: `Compra registrada y producto eliminado del carrito: ${producto}` };
+      const query = `DELETE FROM carrito WHERE usuario = '${username}'`;
+      await connection.query(query);
+      return { success: true, message: `Carrito vaciado para el usuario: ${username}` };
     } catch (error) {
-      throw new Meteor.Error('Error al registrar la compra o vaciar el carrito', error.message);
+      throw new Meteor.Error('Error al vaciar el carrito', error.message);
     }
   }
   

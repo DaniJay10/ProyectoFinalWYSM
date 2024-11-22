@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FormularioCompraCarrito = ({ productos, username, onBack, onUserView }) => {
+const FormularioCompraCarrito = ({ productos, username, onBack }) => {
   const [direccion, setDireccion] = useState('');
   const [metodoPago, setMetodoPago] = useState('');
 
@@ -10,26 +10,40 @@ const FormularioCompraCarrito = ({ productos, username, onBack, onUserView }) =>
       return;
     }
 
-    productos.forEach((producto) => {
+    const comprasRealizadas = productos.map((producto) => ({
+      producto: producto.producto,
+      usuario: username,
+      direccion,
+      metodoPago,
+    }));
+
+    comprasRealizadas.forEach((compra) => {
       Meteor.call(
         'registro.compra',
-        producto.producto,
-        username,
-        direccion,
-        metodoPago,
+        compra.producto,
+        compra.usuario,
+        compra.direccion,
+        compra.metodoPago,
         (error) => {
           if (error) {
-            console.error(`Error al registrar la compra de ${producto.producto}:`, error.message);
-            alert(`Ocurrió un error al registrar la compra de ${producto.producto}.`);
+            console.error(`Error al registrar la compra de ${compra.producto}:`, error.message);
+            alert(`Ocurrió un error al registrar la compra de ${compra.producto}.`);
           } else {
-            console.log(`Compra registrada exitosamente para ${producto.producto}.`);
+            console.log(`Compra registrada exitosamente para ${compra.producto}.`);
           }
         }
       );
     });
 
-    alert('Todas las compras han sido registradas correctamente.');
-    onBack(); 
+    Meteor.call('carrito.vaciar', username, (error) => {
+      if (error) {
+        console.error('Error al vaciar el carrito:', error.message);
+        alert('Ocurrió un error al vaciar el carrito.');
+      } else {
+        alert('Todas las compras han sido registradas correctamente y el carrito se ha vaciado.');
+        onBack();
+      }
+    });
   };
 
   return (
