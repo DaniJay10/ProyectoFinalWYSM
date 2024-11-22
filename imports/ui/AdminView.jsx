@@ -6,12 +6,14 @@ const AdminView = () => {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [precio, setPrecio] = useState('');
+ 
 
   // Estados neditar producto
   const [productoEditar, setProductoEditar] = useState('');
   const [nuevoNombre, setNuevoNombre] = useState('');
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
   const [nuevoPrecio, setNuevoPrecio] = useState('');
+
 
   // Estado eliminar producto
   const [productoEliminar, setProductoEliminar] = useState('');
@@ -104,21 +106,18 @@ const AdminView = () => {
             placeholder="Nombre del producto"
             className="form-input"
             value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-          />
+            onChange={(e) => setNombre(e.target.value)}/>
           <textarea
             placeholder="Descripción"
             className="form-textarea"
             value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-          />
+            onChange={(e) => setDescripcion(e.target.value)}/>
           <input
             type="number"
             placeholder="Precio"
             className="form-input"
             value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-          />
+            onChange={(e) => setPrecio(e.target.value)}/>
           <button className="form-button" onClick={handleCrearProducto}>
             Crear Producto
           </button>

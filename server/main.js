@@ -103,8 +103,7 @@ Meteor.methods({
   },
   async 'carrito.agregar'(nombreProducto, username) {
     try {
-      const query = `
-        INSERT INTO carrito (producto, usuario) VALUES ('${nombreProducto}', '${username}')`;
+      const query = `INSERT INTO carrito (producto, usuario) VALUES ('${nombreProducto}', '${username}')`;
       await connection.query(query);
       return { success: true, message: `Producto ${nombreProducto} agregado al carrito de ${username}` };
     } catch (error) {
